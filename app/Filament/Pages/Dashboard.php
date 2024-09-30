@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\DefaultNoAccessMainDashboard;
+use App\Filament\Widgets\MessageDeliveryChart;
 use App\Filament\Widgets\TotalMessagesSent;
 use App\Filament\Widgets\TotalMessagesSentDelivered;
 use App\Filament\Widgets\TotalMessagesSentExpired;
@@ -33,6 +34,7 @@ class Dashboard extends \Filament\Pages\Dashboard
                 TotalMessagesSentPending::class,
                 TotalMessagesSentUndelivered::class,
                 TotalMessagesSentExpired::class,
+                MessageDeliveryChart::class
             ];
         }
         return [
