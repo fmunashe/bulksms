@@ -4,7 +4,7 @@ namespace App\Filament\Resources\MessageResource\Pages;
 
 use App\Filament\Resources\MessageResource;
 use App\Models\MessageTemplate;
-use app\traits\BulkSMSProcessor;
+use App\traits\BulkSMSProcessor;
 use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
