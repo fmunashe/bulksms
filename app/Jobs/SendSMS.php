@@ -32,6 +32,8 @@ class SendSMS implements ShouldQueue
     {
         $url = env('EASY_SEND_BASE_URL');
         $apiKey = env('API_KEY');
+        $infoBipUrl = env('INFO_BIP_BASE_URL') . '/sms/2/text/advanced';
+        $infoBipApiKey = env('INFO_BIP_API_KEY');
         $recipient = $this->recipient;
         $text = $this->text;
         $data = [
@@ -41,22 +43,40 @@ class SendSMS implements ShouldQueue
             "type" => env('MESSAGE_TYPE')
         ];
 
+        $infoBipData = [
+            'messages' => [
+                [
+                    'from' => env('FROM'),
+                    'destinations' => [
+                        [
+                            'to' => "$recipient",
+                        ],
+                    ],
+                    'text' => $text,
+                ],
+            ],
+        ];
+
+        Log::info("message is ", $infoBipData);
+
         $response = Http::withHeaders([
-            'apikey' => $apiKey,
+//            'apikey' => $apiKey,
+            'Authorization' => "App $infoBipApiKey",
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-        ])->post($url, $data);
+        ])->post($infoBipUrl, $infoBipData);
 
-        Log::info("Data is ", $data);
         Log::info("response is ", [$response]);
         if ($response->successful()) {
-            $responseData = json_decode($response->getBody(), true);
-            Log::info("successful response ok", [$responseData['messageIds'][0]]);
-            if (str_contains($responseData['messageIds'][0], "OK")) {
-                $this->message->update([
-                    'status' => Message::MESSAGE_STATUS_SELECT['Delivered']
-                ]);
-            }
+            $this->message->update([
+                'status' => Message::MESSAGE_STATUS_SELECT['Delivered']
+            ]);
+            //$responseData = json_decode($response->getBody(), true);
+//            if (str_contains($responseData['messageIds'][0], "OK")) {
+//                $this->message->update([
+//                    'status' => Message::MESSAGE_STATUS_SELECT['Delivered']
+//                ]);
+//            }
         }
     }
 }

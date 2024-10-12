@@ -85,9 +85,9 @@ class SubscriptionsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                 ->before(function ( $data){
-                    Log::info("record is ",[$this->ownerRecord]);
-                    Log::info("data is ",[$data]);
-//                    $currentSubscription = $s
+//                    Log::info("record is ",[$this->ownerRecord]);
+//                    Log::info("data is ",[$data]);
+////                    $currentSubscription = $s
                 }),
             ])
             ->actions([
