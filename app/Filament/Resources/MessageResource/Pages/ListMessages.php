@@ -8,11 +8,14 @@ use App\traits\BulkSMSProcessor;
 use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
 use pxlrbt\FilamentExcel\Columns\Column;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
@@ -27,6 +30,68 @@ class ListMessages extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Actions\Action::make('commaSeperated')
+                ->label('Comma Seperated SMS')
+                ->action(function ($record, array $data): void {
+                    if ($data['confirm']) {
+                        $recipients = explode(',',$data['recipients'] );
+                        $user = Auth::user();
+                        $subscription = $user->merchant->subscriptions->first() ?? null;
+                        if ($subscription) {
+                            if ($subscription->account_balance < sizeof($recipients)) {
+                                Notification::make()
+                                    ->title('Insufficient Credits')
+                                    ->body('You do not have enough credits to allow this action!!. Current credits are ' . $subscription->account_balance . ' you need at least ' . sizeof($recipients))
+                                    ->danger()
+                                    ->send()
+                                    ->persistent();
+                                $this->halt();
+                            }
+                        } else {
+                            Notification::make()
+                                ->title('No price plan found')
+                                ->body('Your account has no price plan or subscription associated with it to allow this action')
+                                ->danger()
+                                ->send()
+                                ->persistent();
+                            $this->halt();
+                        }
+                        $response = $this->commaSeperatedSms($data['message'], $recipients);
+
+                        if ($response->status() == 200) {
+                            Notification::make()
+                                ->title('Success')
+                                ->body($response->getData())
+                                ->success()
+                                ->persistent()
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title('Error')
+                                ->body($response->getData())
+                                ->danger()
+                                ->persistent()
+                                ->send();
+                        }
+                    } else {
+                        Notification::make()
+                            ->title('Error')
+                            ->body('Please confirm comma seperated sms sending before proceeding')
+                            ->danger()
+                            ->send();
+                    }
+                })
+                ->form([
+                    TextInput::make('recipients')
+                        ->label('Recipients (Enter recipients starting with country code e.g 263778234258,263778234258,263778234258)')
+                        ->required(),
+                    Textarea::make('message')
+                        ->label('Message')
+                        ->required(),
+                    Toggle::make('confirm')
+                        ->label("Confirm Sending Bulk SMS")
+                        ->required()
+                ]),
             Actions\Action::make('bulkSMS')
                 ->label('Bulk SMS')
                 ->action(function ($record, array $data): void {
@@ -56,7 +121,7 @@ class ListMessages extends ListRecords
 
                         $template = MessageTemplate::query()->findOrFail($data['template']);
                         $filePath = $data['fileUpload'];
-                        $response = $this->processUploadFile($filePath, $template,$user);
+                        $response = $this->processUploadFile($filePath, $template, $user);
 
                         if ($response->status() == 200) {
                             Notification::make()

@@ -30,18 +30,10 @@ class SendSMS implements ShouldQueue
      */
     public function handle(): void
     {
-        $url = env('EASY_SEND_BASE_URL');
-        $apiKey = env('API_KEY');
         $infoBipUrl = env('INFO_BIP_BASE_URL') . '/sms/2/text/advanced';
         $infoBipApiKey = env('INFO_BIP_API_KEY');
         $recipient = $this->recipient;
         $text = $this->text;
-        $data = [
-            "from" => env('FROM'),
-            "to" => "$recipient",
-            "text" => "$text",
-            "type" => env('MESSAGE_TYPE')
-        ];
 
         $infoBipData = [
             'messages' => [
@@ -60,7 +52,6 @@ class SendSMS implements ShouldQueue
         Log::info("message is ", $infoBipData);
 
         $response = Http::withHeaders([
-//            'apikey' => $apiKey,
             'Authorization' => "App $infoBipApiKey",
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
@@ -71,12 +62,6 @@ class SendSMS implements ShouldQueue
             $this->message->update([
                 'status' => Message::MESSAGE_STATUS_SELECT['Delivered']
             ]);
-            //$responseData = json_decode($response->getBody(), true);
-//            if (str_contains($responseData['messageIds'][0], "OK")) {
-//                $this->message->update([
-//                    'status' => Message::MESSAGE_STATUS_SELECT['Delivered']
-//                ]);
-//            }
         }
     }
 }

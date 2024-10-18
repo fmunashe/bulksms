@@ -5,8 +5,6 @@ namespace app\traits;
 use App\Imports\DataImport;
 use App\Models\Message;
 use App\Models\MessageTemplate;
-use App\Models\User;
-use Filament\Notifications\Notification;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -21,14 +19,9 @@ trait BulkSMSProcessor
 
             $vars = $template->messageTemplateFields->pluck('field_name')->toArray();
             $subscription = $user->merchant->subscriptions->first();
-            $total = sizeof($data[0])-1;
+            $total = sizeof($data[0]) - 1;
             if ($subscription->account_balance < $total) {
                 throw new \Exception("You do not have enough credits to allow this action!!. Current credits are $subscription->account_balance you need at least $total");
-//                Notification::make()
-//                    ->title('Insufficient Credits')
-//                    ->body("You do not have enough credits to allow this action!!. Current credits are $subscription->account_balance you need at least $total")
-//                    ->danger()
-//                    ->send();
             }
             foreach ($data[0] as $index => $row) {
 
@@ -49,6 +42,22 @@ trait BulkSMSProcessor
                 ]);
             }
             return response()->json('File Successfully Uploaded And Processed', 200);
+        } catch (\Exception $exception) {
+            return response()->json($exception->getMessage(), 400);
+        }
+    }
+
+    public function commaSeperatedSms($message, array $recipients): JsonResponse
+    {
+        try {
+            foreach ($recipients as $recipient) {
+                Message::query()->create([
+                    'merchant_id' => Auth::user()->merchant_id,
+                    'recipient' => $recipient,
+                    'text_message' => $message
+                ]);
+            }
+            return response()->json('SMSs successfully dispatched and processed', 200);
         } catch (\Exception $exception) {
             return response()->json($exception->getMessage(), 400);
         }
