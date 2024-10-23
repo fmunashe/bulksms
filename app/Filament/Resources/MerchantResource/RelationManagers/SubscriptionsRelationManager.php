@@ -76,7 +76,8 @@ class SubscriptionsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('sms_price')
                     ->numeric()
                     ->sortable()
-                    ->visible(Auth::user()->hasRole("Admin")),
+                    ->visible(Auth::user()->hasRole("Admin"))
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('status'),
                 Tables\Columns\TextColumn::make('effective_date')
                     ->dateTime()

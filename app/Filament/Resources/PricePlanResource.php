@@ -83,14 +83,16 @@ class PricePlanResource extends Resource
                 Tables\Columns\TextColumn::make('price_per_sms')
                     ->numeric()
                     ->sortable()
-                    ->visible(Auth::user()->hasRole("Admin")),
+                    ->visible(Auth::user()->hasRole("Admin"))
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('total_sms')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_price')
                     ->numeric()
                     ->sortable()
-                    ->visible(Auth::user()->hasRole("Admin")),
+                    ->visible(Auth::user()->hasRole("Admin"))
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
