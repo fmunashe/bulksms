@@ -7,6 +7,8 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class PermissionsRelationManager extends RelationManager
 {
@@ -39,6 +41,14 @@ class PermissionsRelationManager extends RelationManager
                     ->multiple()
                     ->preloadRecordSelect()
                     ->modalWidth('3xl'),
+                ExportAction::make()
+                    ->exports([
+                        ExcelExport::make()
+                            ->fromTable()
+                            ->askForFilename()
+                            ->askForWriterType()
+
+                    ]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
