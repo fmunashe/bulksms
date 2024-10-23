@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
@@ -81,13 +82,15 @@ class PricePlanResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price_per_sms')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(Auth::user()->hasRole("Admin")),
                 Tables\Columns\TextColumn::make('total_sms')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_price')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(Auth::user()->hasRole("Admin")),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

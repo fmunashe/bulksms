@@ -84,7 +84,8 @@ class SubscriptionResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('sms_price')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(Auth::user()->hasRole("Admin")),
                 Tables\Columns\TextColumn::make('status'),
                 Tables\Columns\TextColumn::make('effective_date')
                     ->dateTime()
