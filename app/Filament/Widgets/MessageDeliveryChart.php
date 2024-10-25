@@ -22,8 +22,8 @@ class MessageDeliveryChart extends ChartWidget
         $status = $this->filters['messageStatus'] ?? null;
         $results = Message::query()
             ->whereNull('messages.deleted_at')
-            ->when($startDate, fn(Builder $query) => $query->whereDate('trackings.created_at', '>=', $startDate))
-            ->when($endDate, fn(Builder $query) => $query->whereDate('trackings.created_at', '<=', $endDate))
+            ->when($startDate, fn(Builder $query) => $query->whereDate('messages.created_at', '>=', $startDate))
+            ->when($endDate, fn(Builder $query) => $query->whereDate('messages.created_at', '<=', $endDate))
             ->when($status, fn(Builder $query) => $query->where('messages.status', '=', $status))
             ->selectRaw('status, count(*) as value')
             ->groupBy(['status'])
