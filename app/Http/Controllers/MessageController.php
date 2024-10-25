@@ -6,7 +6,7 @@ use App\Http\Requests\StoreMessageRequest;
 use App\Http\Requests\UpdateMessageRequest;
 use App\Models\Merchant;
 use App\Models\Message;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\JsonResponse;
 
 class MessageController extends Controller
 {
@@ -29,9 +29,8 @@ class MessageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreMessageRequest $request)
+    public function store(StoreMessageRequest $request): JsonResponse
     {
-        Log::info("The incoming message is ", [$request->all()]);
         $merchant = Merchant::query()->where('trade_name', 'like', '%' . $request->input('merchant') . '%')->first();
         if ($merchant != null) {
             Message::query()->create([
