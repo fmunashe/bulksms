@@ -38,7 +38,7 @@ class SendSMS implements ShouldQueue
         $infoBipData = [
             'messages' => [
                 [
-                    'from' => env('FROM'),
+                    'from' => $this->message->merchant->sender_id ?? env('FROM'),
                     'destinations' => [
                         [
                             'to' => "$recipient",

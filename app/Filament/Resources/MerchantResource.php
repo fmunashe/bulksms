@@ -51,6 +51,10 @@ class MerchantResource extends Resource
                     ->visible(auth()->user()->roles()->whereHas('permissions', function ($query) {
                         $query->where('title', 'price_plan_edit');
                     })->exists()),
+
+                Forms\Components\TextInput::make('sender_id')
+                    ->label('Sender ID')
+                    ->maxLength(255),
                 Forms\Components\Textarea::make('address')
                     ->required()
                     ->columnSpanFull(),
@@ -65,18 +69,29 @@ class MerchantResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('trade_name')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('mobile')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('contact_person')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('contact_person_mobile')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('contact_person_email')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('pricePlan.price_plan')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('sender_id')
+                    ->label('Sender ID')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
