@@ -37,7 +37,7 @@ class SmsPanelProvider extends PanelProvider
             ->brandName('Bulk SMS')
             ->brandLogo(asset('trixal-logo.png'))
             ->favicon(asset('trixal-logo.png'))
-            ->brandLogoHeight('60px')
+            ->brandLogoHeight('50px')
             ->defaultThemeMode(ThemeMode::Light)
             ->colors([
 //                'primary' => Color::Amber,
