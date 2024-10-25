@@ -6,6 +6,7 @@ use App\Http\Requests\StoreMessageRequest;
 use App\Http\Requests\UpdateMessageRequest;
 use App\Models\Merchant;
 use App\Models\Message;
+use App\Models\Subscription;
 use Illuminate\Http\JsonResponse;
 
 class MessageController extends Controller
@@ -33,12 +34,16 @@ class MessageController extends Controller
     {
         $merchant = Merchant::query()->where('trade_name', 'like', '%' . $request->input('merchant') . '%')->first();
         if ($merchant != null) {
-            Message::query()->create([
-                'merchant_id' => $merchant->id,
-                'text_message' => $request->input('message'),
-                'recipient' => $request->input('recipient')
-            ]);
-            return response()->json("Message Successfully Sent");
+            $subscription = Subscription::query()->where('merchant_id', '=', $merchant->id)->first();
+            if ($subscription != null) {
+                Message::query()->create([
+                    'merchant_id' => $merchant->id,
+                    'text_message' => $request->input('message'),
+                    'recipient' => $request->input('recipient')
+                ]);
+                return response()->json("Message Successfully Sent");
+            }
+            return response()->json("Provided Merchant " . $request->input('merchant') . " does not have a subscription");
         }
         return response()->json("Provided Merchant " . $request->input('merchant') . " does not exist");
     }
