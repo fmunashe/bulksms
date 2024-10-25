@@ -11,7 +11,7 @@ class StoreMessageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StoreMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'recipient' => 'required',
+            'message' => 'required',
+            'merchant' => 'required'
         ];
     }
 }
