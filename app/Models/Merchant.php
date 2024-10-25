@@ -39,4 +39,13 @@ class Merchant extends Model
     {
         return $this->hasMany(MessageTemplate::class);
     }
+
+    public static function getMerchants($merchantName): array
+    {
+        $merchants = Merchant::all()->pluck('trade_name', 'id')->toArray();
+        if ($merchantName != "Trixaltech") {
+            $merchants = Merchant::query()->where('trade_name', '=', $merchantName)->pluck('trade_name', 'id')->toArray();
+        }
+        return $merchants;
+    }
 }

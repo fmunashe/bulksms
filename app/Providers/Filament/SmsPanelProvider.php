@@ -35,13 +35,13 @@ class SmsPanelProvider extends PanelProvider
             ->profile(isSimple: false)
             ->emailVerification()
             ->brandName('Bulk SMS')
-            ->brandLogo(asset('logo.jpg'))
-            ->favicon(asset('logo.jpg'))
+            ->brandLogo(asset('trixal-logo.png'))
+            ->favicon(asset('trixal-logo.png'))
             ->brandLogoHeight('60px')
             ->defaultThemeMode(ThemeMode::Light)
             ->colors([
 //                'primary' => Color::Amber,
-                'primary' => Color::rgb('rgb(82,136,196)'),
+                'primary' => Color::rgb('rgb(45,60,88)'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

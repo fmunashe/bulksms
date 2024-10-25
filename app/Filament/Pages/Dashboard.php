@@ -9,11 +9,13 @@ use App\Filament\Widgets\TotalMessagesSentDelivered;
 use App\Filament\Widgets\TotalMessagesSentExpired;
 use App\Filament\Widgets\TotalMessagesSentPending;
 use App\Filament\Widgets\TotalMessagesSentUndelivered;
+use App\Models\Merchant;
 use App\Models\Message;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard\Actions\FilterAction;
 use Filament\Pages\Dashboard\Concerns\HasFiltersAction;
+use Illuminate\Support\Facades\Auth;
 
 class Dashboard extends \Filament\Pages\Dashboard
 {
@@ -21,8 +23,6 @@ class Dashboard extends \Filament\Pages\Dashboard
 
     protected static ?string $title = 'Dashboard';
     protected static string $routePath = 'main-dashboard';
-//    protected static ?string $navigationGroup = 'Commodity Dashboard';
-//    protected static ?string $navigationIcon = '';
 
     public function getWidgets(): array
     {
@@ -61,6 +61,11 @@ class Dashboard extends \Filament\Pages\Dashboard
                             ->label('Message Status')
                             ->searchable()
                             ->options(Message::MESSAGE_STATUS_SELECT)
+                            ->preload(),
+                        Select::make('merchant')
+                            ->label('Merchant')
+                            ->searchable()
+                            ->options(Merchant::getMerchants(Auth::user()->merchant->trade_name ?? null))
                             ->preload(),
 
                         DatePicker::make('startDate'),
