@@ -71,7 +71,11 @@ class MessageResource extends Resource
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('text_message')
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('part_count')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('character_count')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
