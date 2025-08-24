@@ -16,6 +16,7 @@ use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\HtmlString;
 use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
 use pxlrbt\FilamentExcel\Columns\Column;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
@@ -26,12 +27,23 @@ class ListMessages extends ListRecords
 
     protected static string $resource = MessageResource::class;
 
+    protected ?string $subheading = 'Manage and track SMS messages sent to recipients. View delivery status, message content, and export message data.';
+
     protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),
             Actions\Action::make('commaSeperated')
                 ->label('Comma Seperated SMS')
+                ->modalContent(new HtmlString('
+                    <ol>
+                        <li>Enter recipients starting with country code</li>
+                        <li>Separate multiple numbers with commas</li>
+                        <li>Example: 263778234258,263778234259,263778234260</li>
+                        <li>Ensure sufficient credits before sending</li>
+                        <li>Part count for a message with special characters such as /:;\.,$%^&*#@ is 70 characters per message</li>
+                    </ol>
+                '))
                 ->action(function ($record, array $data): void {
                     if ($data['confirm']) {
                         $recipients = explode(',',$data['recipients'] );
@@ -83,7 +95,7 @@ class ListMessages extends ListRecords
                 })
                 ->form([
                     TextInput::make('recipients')
-                        ->label('Recipients (Enter recipients starting with country code e.g 263778234258,263778234258,263778234258)')
+                        ->label('Recipients')
                         ->required(),
                     Textarea::make('message')
                         ->label('Message')
@@ -94,6 +106,14 @@ class ListMessages extends ListRecords
                 ]),
             Actions\Action::make('bulkSMS')
                 ->label('Bulk SMS')
+                ->tooltip('Upload an Excel file with recipients and send bulk SMS using templates')
+                ->modalContent(new HtmlString('
+                    <ol>
+                        <li>Enter recipients starting with country code</li>
+                        <li>Ensure sufficient credits before sending</li>
+                        <li>Part count for a message with special characters such as /:;\.,$%^&*#@ is 70 characters per message</li>
+                    </ol>
+                '))
                 ->action(function ($record, array $data): void {
                     if ($data['confirm']) {
                         $user = Auth::user();

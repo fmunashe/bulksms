@@ -17,6 +17,20 @@ class MessageObserver
             $partCount = 2;
         }
 
+        $specialChars = ['/', ':', ';', '\\', '.', ',', '$', '%', '^', '&', '*', '#', '@'];
+        $hasSpecialChars = false;
+
+        foreach ($specialChars as $char) {
+            if (str_contains($message->text_message, $char)) {
+                $hasSpecialChars = true;
+                break;
+            }
+        }
+
+        if ($hasSpecialChars) {
+            $partCount = ceil($characterCount / 70);
+        }
+
         $subscription = $message->merchant->subscriptions->first();
         $message->merchant->subscriptions->first->update([
             'account_balance' => $subscription->account_balance - $partCount
