@@ -14,7 +14,8 @@ class Message extends Model
         'Delivered' => 'Delivered',
         'Undelivered' => 'Undelivered',
         'Pending' => 'Pending',
-        'Expired' => 'Expired'
+        'Expired' => 'Expired',
+        'InsufficientCredit' => 'Insufficient Credit'
     ];
     use HasFactory, SoftDeletes, HasUuids;
 

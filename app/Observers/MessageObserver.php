@@ -10,7 +10,6 @@ class MessageObserver
 
     public function created(Message $message): void
     {
-        dispatch(new SendSMS($message->recipient, $message->text_message, $message));
         $partCount = 1;
         $characterCount = strlen($message->text_message);
         if ($characterCount > 160 && $characterCount < 320) {
@@ -35,10 +34,20 @@ class MessageObserver
         $message->merchant->subscriptions->first->update([
             'account_balance' => $subscription->account_balance - $partCount
         ]);
-        $message->update([
-            'part_count' => $partCount,
-            'character_count' => $characterCount
-        ]);
+
+        if ($subscription->account_balance >= 0) {
+            dispatch(new SendSMS($message->recipient, $message->text_message, $message));
+            $message->update([
+                'part_count' => $partCount,
+                'character_count' => $characterCount
+            ]);
+        } else {
+            $message->update([
+                'part_count' => $partCount,
+                'character_count' => $characterCount,
+                'status' => Message::MESSAGE_STATUS_SELECT['InsufficientCredit']
+            ]);
+        }
     }
 
     /**
